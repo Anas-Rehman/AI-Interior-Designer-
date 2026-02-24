@@ -64,6 +64,33 @@ export const ActionPlanScreen: React.FC<ActionPlanScreenProps> = ({ plan, action
               {actionPlanText}
             </ReactMarkdown>
           </div>
+
+          {plan.shoppableItems && plan.shoppableItems.length > 0 && (
+            <div className="mt-12 pt-8 border-t border-gray-200">
+              <h3 className="text-2xl font-serif text-[#1a1a1a] mb-6 flex items-center gap-2">
+                <ShoppingBag className="text-[#8c7a6b]" size={24} />
+                Shop the Look
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {plan.shoppableItems.map((item) => (
+                  <a
+                    key={item.id}
+                    href={item.searchUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col p-4 rounded-xl border border-gray-100 bg-[#f9f8f6] hover:border-[#8c7a6b] hover:shadow-sm transition-all group print:border-gray-300"
+                  >
+                    <span className="font-medium text-gray-800 group-hover:text-[#8c7a6b] transition-colors line-clamp-2 mb-2">
+                      {item.name}
+                    </span>
+                    <span className="text-sm font-semibold text-gray-500 mt-auto">
+                      Est. {item.estimatedPrice}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

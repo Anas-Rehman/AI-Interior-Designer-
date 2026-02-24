@@ -1,5 +1,5 @@
 import { GoogleGenAI, ThinkingLevel, Type } from '@google/genai';
-import { RoomImage, DesignStyle, DesignerPersona, EditableElement, ChatMessage } from '../types';
+import { RoomImage, DesignStyle, DesignerPersona, EditableElement, ChatMessage, ShoppableItem } from '../types';
 
 let aiInstance: GoogleGenAI | null = null;
 
@@ -341,5 +341,55 @@ Be specific and practical.`;
   });
 
   return response.text || '';
+};
+
+export const extractShoppableItems = async (
+  textPlan: string,
+  style: DesignStyle
+): Promise<ShoppableItem[]> => {
+  const ai = getAI();
+  const prompt = `Act as an expert personal shopper and interior designer.
+I have a room design plan in a "${style}" style.
+Analyze the following design plan and extract 3-5 distinct, key pieces of furniture, decor, or materials mentioned that the user needs to buy to achieve this look.
+
+For each item, provide:
+1. A descriptive, search-friendly 'name' (e.g., "Mid-Century Modern Walnut Accent Chair").
+2. A very realistic 'estimatedPrice' as a string (e.g., "$150 - $300").
+3. A 'searchUrl' which should be a valid Amazon or Wayfair search URL encoding the item name (e.g., https://www.amazon.com/s?k=mid+century+modern+walnut+accent+chair).
+
+Design Plan to Analyze:
+"""
+${textPlan}
+"""
+
+Return ONLY a valid JSON array of objects with 'id' (a unique string like "item-1"), 'name', 'estimatedPrice', and 'searchUrl' properties.`;
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-3.1-pro-preview',
+    contents: prompt,
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            id: { type: Type.STRING },
+            name: { type: Type.STRING },
+            estimatedPrice: { type: Type.STRING },
+            searchUrl: { type: Type.STRING }
+          }
+        }
+      }
+    }
+  });
+
+  try {
+    const rawItems = JSON.parse(response.text || '[]');
+    return rawItems as ShoppableItem[];
+  } catch (e) {
+    console.error("Error parsing shoppable items:", e);
+    return [];
+  }
 };
 

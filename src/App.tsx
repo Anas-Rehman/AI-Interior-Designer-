@@ -5,7 +5,7 @@ import { ResultScreen } from './components/ResultScreen';
 import { Chatbot } from './components/Chatbot';
 import { ActionPlanScreen } from './components/ActionPlanScreen';
 import { DesignStyle, DesignerPersona, RoomImage, DesignPlan, ChatMessage } from './types';
-import { generateDesignPlan, generateRedesignedImage, createChatSession, suggestAlternativeStyles, extractEditableElements, editRoomElement, extractSpecificDesignChange, applySpecificEditToImage, generateActionPlan } from './services/geminiService';
+import { generateDesignPlan, generateRedesignedImage, createChatSession, suggestAlternativeStyles, extractEditableElements, editRoomElement, extractSpecificDesignChange, applySpecificEditToImage, generateActionPlan, extractShoppableItems } from './services/geminiService';
 
 export default function App() {
   const [appState, setAppState] = useState<'upload' | 'loading' | 'result' | 'actionPlan'>('upload');
@@ -137,8 +137,14 @@ export default function App() {
 
     try {
       const currentImage = plan.generatedImage || plan.originalImage;
-      const text = await generateActionPlan(plan.originalImage, currentImage, plan.style, plan.persona);
+
+      const [text, items] = await Promise.all([
+        generateActionPlan(plan.originalImage, currentImage, plan.style, plan.persona),
+        extractShoppableItems(plan.textPlan, plan.style)
+      ]);
+
       setActionPlanText(text);
+      setPlan({ ...plan, shoppableItems: items });
       setAppState('actionPlan');
     } catch (error) {
       console.error("Error generating action plan:", error);

@@ -1,12 +1,12 @@
-export type DesignStyle = 
-  | 'Modern' 
-  | 'Minimalist' 
-  | 'Industrial' 
-  | 'Bohemian' 
-  | 'Scandinavian' 
-  | 'Mid-Century Modern' 
-  | 'Classic/Traditional' 
-  | 'Japandi' 
+export type DesignStyle =
+  | 'Modern'
+  | 'Minimalist'
+  | 'Industrial'
+  | 'Bohemian'
+  | 'Scandinavian'
+  | 'Mid-Century Modern'
+  | 'Classic/Traditional'
+  | 'Japandi'
   | 'Art Deco';
 
 export type DesignerPersona =
@@ -33,6 +33,13 @@ export interface EditableElement {
   box: BoundingBox;
 }
 
+export interface ShoppableItem {
+  id: string;
+  name: string;
+  estimatedPrice: string;
+  searchUrl: string;
+}
+
 export interface DesignPlan {
   originalImage: RoomImage;
   generatedImage: RoomImage | null;
@@ -41,6 +48,7 @@ export interface DesignPlan {
   persona: DesignerPersona;
   suggestedStyles: DesignStyle[];
   editableElements: EditableElement[];
+  shoppableItems?: ShoppableItem[];
 }
 
 export interface ChatMessage {
