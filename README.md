@@ -153,10 +153,3 @@ This project is configured with a robust CI/CD pipeline using **GitHub Actions**
 1. Ensure GitHub Pages is enabled in your repository settings (Settings > Pages > Source: GitHub Actions).
 2. Ensure you have added your actual API key as a Repository Secret named `GEMINI_API_KEY` (Settings > Secrets and variables > Actions). The workflow automatically maps this secret to the `VITE_` prefix required by the build process.
 
-<div align="center">
-
-Made with ❤️ and ☕ by **Muhammad Anas Rehman**
-
-Created with the help of **Google Antigravity**
-
-</div>
